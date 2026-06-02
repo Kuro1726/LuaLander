@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 public class Lander : MonoBehaviour
 {
     private Rigidbody2D landerRigidbody;
+    private float fuelAmount = 10f;
 
     public event EventHandler OnLeftForce;
     public event EventHandler OnUpForce;
@@ -19,6 +20,17 @@ public class Lander : MonoBehaviour
     private void FixedUpdate()
     {
         OnBeforeForce?.Invoke(this, EventArgs.Empty);
+        Debug.Log("Fuel Amount:" + fuelAmount);
+        if (fuelAmount <= 0)
+        {
+            return;
+        }
+        if (Keyboard.current.upArrowKey.isPressed ||
+            Keyboard.current.leftArrowKey.isPressed ||
+            Keyboard.current.rightArrowKey.isPressed)
+        {
+            ConsumptFuel();
+        }
         if (Keyboard.current.upArrowKey.isPressed)
         {
             float speed = 600f;
@@ -86,5 +98,22 @@ public class Lander : MonoBehaviour
         int score = Mathf.RoundToInt(scoreSpeed + scoreAngle) * landingPad.GetMultiScore() ;
         Debug.Log("Score: " + score);
 
+    }
+
+    private void ConsumptFuel()
+    {
+        float fuelConsumpt = 1f;
+        fuelAmount -= Time.deltaTime * fuelConsumpt;
+    }
+    
+
+    private void OnTriggerEnter2D(Collider2D collider2D)
+    {
+        if (collider2D.gameObject.TryGetComponent(out FuelPickup fuelPickup))
+        {
+            float fuelPickupAmount = 10f;
+            fuelAmount += fuelPickupAmount;
+            fuelPickup.DestroySelf();
+        }
     }
 }
