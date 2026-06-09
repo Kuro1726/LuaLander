@@ -5,11 +5,35 @@ public class GameManager : MonoBehaviour
 {
 
     private int score;
+    private float time;
+    private bool isTimeActive = false;
+    
+    public static GameManager Instance;
 
+    void Awake()
+    {
+        Instance = this;
+    }
+    
     void Start()
     {
         Lander.Instance.OnPickupCoinEvent += Lander_OnCoinPickup;
         Lander.Instance.OnLanded += Lander_OnLanded;
+        Lander.Instance.StateChanged += Lander_OnStateChanged;
+    }
+
+    private void Lander_OnStateChanged(object sender, Lander.StateChangedEventArgs e)
+    {
+        isTimeActive = Lander.State.Normal == e.state;
+    }
+
+    void Update()
+    {
+        if (isTimeActive)
+        {
+            time += Time.deltaTime;
+            
+        }
     }
 
     private void Lander_OnLanded(object sender, Lander.OnLandedEventArgs e)
@@ -29,10 +53,13 @@ public class GameManager : MonoBehaviour
         Debug.Log(score);
     }
 
-
-    // Update is called once per frame
-    void Update()
+    public int getScore()
     {
-        
+        return score;
+    }
+
+    public float getTime()
+    {
+        return time;
     }
 }
