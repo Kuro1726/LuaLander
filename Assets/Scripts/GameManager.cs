@@ -5,15 +5,19 @@ using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
+    private static int totalScore = 0;
+    private static int levelNumber = 1;
 
     private int score;
     private float time;
     private bool isTimeActive = false;
 
-    private static int levelNumber = 1;
     [SerializeField] private List<GameLevel> gameLevelList;
     
     public static GameManager Instance;
+
+    public event EventHandler PauseGameEvent;
+    public event EventHandler UnpauseGameEvent;
 
     void Awake()
     {
@@ -25,8 +29,14 @@ public class GameManager : MonoBehaviour
         Lander.Instance.OnPickupCoinEvent += Lander_OnCoinPickup;
         Lander.Instance.OnLanded += Lander_OnLanded;
         Lander.Instance.StateChanged += Lander_OnStateChanged;
-        LoadCurrentLevel();
         
+        LoadCurrentLevel();
+        GameInput.Instance.OnMenuButton += GameInputs_OnMenuButton;
+    }
+
+    private void GameInputs_OnMenuButton(object sender, EventArgs e)
+    {
+        PauseUnpauseGame();
     }
 
     private void Lander_OnStateChanged(object sender, Lander.StateChangedEventArgs e)
@@ -34,15 +44,29 @@ public class GameManager : MonoBehaviour
         isTimeActive = Lander.State.Normal == e.state;
     }
 
-    private void LoadCurrentLevel()
+    private GameLevel GetGameLevel()
     {
         foreach (GameLevel gameLevel in gameLevelList)
         {
             if (gameLevel.GetLevelNumber() == levelNumber)
             {
-                GameLevel spawnGameLevel = Instantiate(gameLevel, Vector3.zero, Quaternion.identity);
-                Lander.Instance.transform.position = spawnGameLevel.GetLanderSpawnPoint();
+                return gameLevel;
             }
+        }
+        return null;
+    }
+
+    private void LoadCurrentLevel()
+    {
+        GameLevel gameLevel = GetGameLevel();
+        if (gameLevel != null)
+        {
+            GameLevel spawnGameLevel = Instantiate(gameLevel, Vector3.zero, Quaternion.identity); 
+            Lander.Instance.transform.position = spawnGameLevel.GetLanderSpawnPoint();
+        }
+        else
+        {
+            Debug.LogError($"❌ Cannot find data for Level {levelNumber}.");
         }
     }
 
@@ -54,12 +78,27 @@ public class GameManager : MonoBehaviour
     public void GoToNextLevel()
     {
         levelNumber++;
-        SceneManager.LoadScene(0);
+        totalScore += score;
+        Debug.Log("LEVEL NUMBER: " + levelNumber);
+        Debug.Log("GAME LEVEL LIST COUNT: " + gameLevelList.Count);
+        if (GetGameLevel() == null)
+        {
+            SceneLoader.LoadScene(SceneLoader.Scene.GameOverScene);
+        }
+        else
+        {
+            SceneLoader.LoadScene(SceneLoader.Scene.GamePlayScene);
+        }
+    }
+
+    public int GetToalScore()
+    {
+        return totalScore;
     }
 
     public void RetryLevel()
     {
-        SceneManager.LoadScene(0);
+        SceneLoader.LoadScene(SceneLoader.Scene.GamePlayScene);
     }
 
     void Update()
@@ -67,7 +106,6 @@ public class GameManager : MonoBehaviour
         if (isTimeActive)
         {
             time += Time.deltaTime;
-            
         }
     }
 
@@ -96,5 +134,26 @@ public class GameManager : MonoBehaviour
     public float getTime()
     {
         return time;
+    }
+
+    private void PauseUnpauseGame()
+    {
+        if (Time.timeScale == 1f)
+        {
+            PauseGame();
+        }
+        else 
+            UnpauseGame();
+    }
+    public void PauseGame()
+    {
+        Time.timeScale = 0f;
+        PauseGameEvent?.Invoke(this ,EventArgs.Empty);
+    }
+
+    public void UnpauseGame()
+    {
+        Time.timeScale = 1f;
+        UnpauseGameEvent?.Invoke(this, EventArgs.Empty);
     }
 }
