@@ -25,7 +25,8 @@ public class PauseUI : MonoBehaviour
         });
         musicButton.onClick.AddListener(() =>
         {
-            
+            MusicManager.Instance.ChangeMusicVolume();
+            musicButtonText.text = "MUSIC " + MusicManager.Instance.GetMusicVolume();
         });
     }
 
