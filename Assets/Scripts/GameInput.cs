@@ -9,6 +9,11 @@ public class GameInput : MonoBehaviour
 
     public event EventHandler OnMenuButton;
     private InputActions inputActions;
+
+    private void OnDestroy()
+    {
+        inputActions.Disable();
+    }
     private void Awake()
     {
         Instance = this;

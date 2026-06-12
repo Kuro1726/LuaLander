@@ -40,4 +40,15 @@ public class PauseUI : MonoBehaviour
     {
         gameObject.SetActive(true);
     }
+    
+    // THÊM HÀM NÀY ĐỂ FIX LỖI
+    private void OnDestroy()
+    {
+        // Luôn kiểm tra null vì GameManager có thể đã bị destroy trước PauseUI
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.PauseGameEvent -= GameManager_OnPauseGameEvent;
+            GameManager.Instance.UnpauseGameEvent -= GameManager_OnUnpauseGameEvent;
+        }
+    }
 }

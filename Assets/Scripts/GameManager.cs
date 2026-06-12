@@ -156,4 +156,13 @@ public class GameManager : MonoBehaviour
         Time.timeScale = 1f;
         UnpauseGameEvent?.Invoke(this, EventArgs.Empty);
     }
+    
+    // THÊM HÀM NÀY ĐỂ FIX LỖI TRIỆT ĐỂ
+    private void OnDestroy()
+    {
+        if (GameInput.Instance != null)
+        {
+            GameInput.Instance.OnMenuButton -= GameInputs_OnMenuButton;
+        }
+    }
 }
