@@ -7,7 +7,6 @@ using UnityEngine.UI;
 public class LandedUI : MonoBehaviour
 {
     [SerializeField] private TextMeshProUGUI titleTextMesh;
-
     [SerializeField] private TextMeshProUGUI statTextMesh;
     [SerializeField] private TextMeshProUGUI nextGameButtonTextMesh;
     [SerializeField] private Button nextGameButton;
@@ -26,7 +25,6 @@ public class LandedUI : MonoBehaviour
     void Start()
     {
         Lander.Instance.OnLanded += OnLanded;
-        ;
         Hide();
     }
 
@@ -55,16 +53,11 @@ public class LandedUI : MonoBehaviour
     private void Show()
     {
         gameObject.SetActive(true);
+        nextGameButton.Select();
     }
 
     private void Hide()
     {
         gameObject.SetActive(false);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

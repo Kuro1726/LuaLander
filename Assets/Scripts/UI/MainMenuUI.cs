@@ -8,13 +8,20 @@ public class MainMenuUI : MonoBehaviour
 
     void Awake()
     {
+        Time.timeScale = 1f;
         startGameButton.onClick.AddListener(() =>
         {
+            GameManager.ResetStaticData();
             SceneLoader.LoadScene(SceneLoader.Scene.GamePlayScene);
         });
         quitGameButton.onClick.AddListener((() =>
         {
             Application.Quit();
         }));
+    }
+
+    void Start()
+    {
+        startGameButton.Select();;
     }
 }

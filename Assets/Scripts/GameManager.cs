@@ -14,7 +14,7 @@ public class GameManager : MonoBehaviour
 
     [SerializeField] private List<GameLevel> gameLevelList;
     
-    public static GameManager Instance;
+    public static GameManager Instance { get; private set; }
 
     public event EventHandler PauseGameEvent;
     public event EventHandler UnpauseGameEvent;
@@ -155,6 +155,12 @@ public class GameManager : MonoBehaviour
     {
         Time.timeScale = 1f;
         UnpauseGameEvent?.Invoke(this, EventArgs.Empty);
+    }
+
+    public static void ResetStaticData()
+    {
+        levelNumber = 1;
+        totalScore = 0;
     }
     
     // THÊM HÀM NÀY ĐỂ FIX LỖI TRIỆT ĐỂ

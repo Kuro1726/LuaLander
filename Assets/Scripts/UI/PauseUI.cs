@@ -8,6 +8,7 @@ public class PauseUI : MonoBehaviour
     [SerializeField] private Button resumeButton;
     [SerializeField] private Button soundButton;
     [SerializeField] private Button musicButton;
+    [SerializeField] private Button mainMenuButton;
     [SerializeField] private TextMeshProUGUI soundButtonText;
     [SerializeField] private TextMeshProUGUI musicButtonText;
     
@@ -28,6 +29,10 @@ public class PauseUI : MonoBehaviour
             MusicManager.Instance.ChangeMusicVolume();
             musicButtonText.text = "MUSIC " + MusicManager.Instance.GetMusicVolume();
         });
+        mainMenuButton.onClick.AddListener(() =>
+        {
+            SceneLoader.LoadScene(SceneLoader.Scene.MainMenuScene);
+        });
     }
 
     void Start()
@@ -35,6 +40,7 @@ public class PauseUI : MonoBehaviour
         GameManager.Instance.PauseGameEvent += GameManager_OnPauseGameEvent;
         GameManager.Instance.UnpauseGameEvent += GameManager_OnUnpauseGameEvent;
         soundButtonText.text = "SOUND " + SoundManager.Instance.GetSoundVolume();
+        resumeButton.Select();
         Hide();
     }
 
