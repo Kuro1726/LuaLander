@@ -12,26 +12,47 @@ public class StatsUI : MonoBehaviour
     [SerializeField] private GameObject downArrowGameObject;
 
     [SerializeField] private Image fuelAmountImage;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    
+    private int lastLevel = -1;
+    private int lastScore = -1;
+    private int lastTime = -1;
+    private int lastSpeedX = -1;
+    private int lastSpeedY = -1;
 
     private void UpdateStatsTextMesh()
     {
-        rightArrowGameObject.SetActive(Lander.Instance.getSpeedX() > 0);
-        leftArrowGameObject.SetActive(Lander.Instance.getSpeedX() < 0);
-        upArrowGameObject.SetActive(Lander.Instance.getSpeedY() > 0);
-        downArrowGameObject.SetActive(Lander.Instance.getSpeedY() < 0);
-        statsTextMesh.text = GameManager.Instance.GetLevelNumber() + "\n"
-            + GameManager.Instance.getScore() + "\n"
-                                                             + Mathf.Round(GameManager.Instance.getTime()) + "\n"
-                                                             + Mathf.Round(Lander.Instance.getSpeedX() * 10) + "\n"
-                                                             + Mathf.Round(Lander.Instance.getSpeedY() * 10);
-        fuelAmountImage.fillAmount = Lander.Instance.GetFuelAmountNormalized();
-    }
-    
-    
-    void Start()
-    {
+        if (Lander.Instance == null || GameManager.Instance == null) return;
         
+        float currentSpeedX = Lander.Instance.getSpeedX();
+        float currentSpeedY = Lander.Instance.getSpeedY();
+        
+        
+        rightArrowGameObject.SetActive(currentSpeedX > 0);
+        leftArrowGameObject.SetActive(currentSpeedX < 0);
+        upArrowGameObject.SetActive(currentSpeedY > 0);
+        downArrowGameObject.SetActive(currentSpeedY < 0);
+        
+        fuelAmountImage.fillAmount = Lander.Instance.GetFuelAmountNormalized();
+        
+        int currentLevelInt = GameManager.Instance.GetLevelNumber();
+        int currentScoreInt = GameManager.Instance.getScore();
+        int currentTimeInt = Mathf.RoundToInt(GameManager.Instance.getTime());
+        int currentSpeedXInt = Mathf.RoundToInt(currentSpeedX * 10);
+        int currentSpeedYInt = Mathf.RoundToInt(currentSpeedY * 10);
+        
+        if (currentLevelInt != lastLevel || currentScoreInt != lastScore || 
+            currentTimeInt != lastTime || currentSpeedXInt != lastSpeedX || currentSpeedYInt != lastSpeedY)
+        {
+            // Gán lại giá trị cũ
+            lastLevel = currentLevelInt;
+            lastScore = currentScoreInt;
+            lastTime = currentTimeInt;
+            lastSpeedX = currentSpeedXInt;
+            lastSpeedY = currentSpeedYInt;
+
+            // Cập nhật giao diện
+            statsTextMesh.text = $"{currentLevelInt}\n{currentScoreInt}\n{currentTimeInt}\n{currentSpeedXInt}\n{currentSpeedYInt}";
+        }
     }
 
     // Update is called once per frame

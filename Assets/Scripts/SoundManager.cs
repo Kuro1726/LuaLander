@@ -63,4 +63,13 @@ public class SoundManager : MonoBehaviour
     {
         AudioSource.PlayClipAtPoint(coinPickUpSound, Camera.main.transform.position, GetSoundVolumeNormalized());
     }
+    private void OnDestroy()
+    {
+        if (Lander.Instance != null)
+        {
+            Lander.Instance.OnPickupCoinEvent -= Lander_OnOnPickupCoinEvent;
+            Lander.Instance.OnPickupFuelEvent -= Lander_OnOnPickupFuelEvent;
+            Lander.Instance.OnLanded -= Lander_OnOnLanded;
+        }
+    }
 }

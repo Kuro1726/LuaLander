@@ -60,4 +60,12 @@ public class LandedUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    
+    private void OnDestroy()
+    {
+        if (Lander.Instance != null)
+        {
+            Lander.Instance.OnLanded -= OnLanded;
+        }
+    }
 }

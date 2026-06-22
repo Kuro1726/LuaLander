@@ -38,4 +38,12 @@ public class InstructionUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
+    
+    private void OnDestroy()
+    {
+        if (MainMenuUI.Instance != null)
+        {
+            MainMenuUI.Instance.openInstruction -= MainMenuUI_OnopenInstruction;
+        }
+    }
 }
